@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" /> -->
+
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Gluten:wght@200;300&display=swap" rel="stylesheet" /> -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="shorcut icon" href="https://findicons.com/files/icons/1017/round_theme/59/weather.png" />
+    <style>
+      body {
+        /* font-family: "Lobster", cursive; */
+
+        /* font-family: "Gluten", cursive; */
+
+        font-family: "Roboto", sans-serif;
+      }
+    </style>
+
+    <title>Weather</title>
+  </head>
+  <body onload="bodyload()">
+    <div class="container-fluid d-flex justify-content-center align-items-center bg-gradient mt-5">
+      <div class="container w-25 d-flex justify-content-center shadow flex-column">
+        <h2 class="fw-bold">Weather</h2>
+        <br />
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Search City" id="txtInput" />
+          <button class="btn btn-warning" type="button" onclick="searchWeather()" id="buttonS" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Search
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Weather Report</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <h3 id="City" class="text-warning mb-3"></h3>
+                  <h4 id="temp" class="text-primary"></h4>
+                  <h3 id="rain" class="d-flex justify-content-evenly align-items-center"></h3>
+                  <p id="main"></p>
+                  <p id="feels_like"></p>
+                  <p id="temp_min"></p>
+                  <p id="temp_max"></p>
+                  <p id="description"></p>
+                  <p id="humidity"></p>
+                  <p id="pressure"></p>
+                  <p id="visibility"></p>
+                  <p id="wind"></p>
+                  <p id="clouds"></p>
+                  <p id="sunrise"></p>
+                  <p id="sunset"></p>
+
+                  <h5></h5>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="timer d-flex justify-content-center align-items-center m-5">
+      <div class="d-flex justify-content-center align-items-center flex-column">
+        <h1 id="wish" class="shadow-sm p-3 text-info rounded-pill"></h1>
+        <h2 id="clockTime" class="m-3 shadow-sm p-3 text-info rounded-pill fw-bold border border-warning"></h2>
+        <h2 id="dateId" class="shadow-sm m-3 p-3 text-info"></h2>
+      </div>
+    </div>
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <script>
+      function searchWeather() {
+        var input = document.getElementById("txtInput").value;
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${input}&appid=50a7aa80fa492fa92e874d23ad061374`)
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            document.getElementById("City").innerHTML = input.toUpperCase();
+            document.getElementById("temp").innerHTML = `<i class="bi bi-thermometer text-info"></i> Temprature : ${(data.main.temp - 273).toFixed(
+              2
+            )} 	&#176;C`;
+            document.getElementById("feels_like").innerHTML = `<i class="bi bi-thermometer-half text-info"></i> Feel Like : ${(
+              data.main.feels_like - 273
+            ).toFixed(2)} &#176;C`;
+            document.getElementById("temp_max").innerHTML = `<i class="bi bi-thermometer-high text-info"></i> Max Temp. : ${(
+              data.main.temp_max - 273
+            ).toFixed(2)} &#176;C`;
+            document.getElementById("temp_min").innerHTML = `<i class="bi bi-thermometer-low text-info"></i> Min Temp. : ${(
+              data.main.temp_min - 273
+            ).toFixed(2)} &#176;C`;
+            document.getElementById("humidity").innerHTML = `<i class="bi bi-moisture text-info"></i> Humidity : ${data.main.humidity}% `;
+            document.getElementById("pressure").innerHTML = `<i class="bi bi-chevron-double-down text-info"></i> Pressure : ${data.main.pressure} mb`;
+            document.getElementById("visibility").innerHTML = `<i class="bi bi-eye text-info"></i> Visibility : ${data.visibility / 100} meter`;
+            document.getElementById("wind").innerHTML = `<i class="bi bi-wind text-info"></i> Wind Speed : ${data.wind.speed} meter/sec`;
+            document.getElementById("clouds").innerHTML = `<i class="bi bi-cloud text-info"></i> Clouds : ${data.clouds.all}%`;
+
+            //weather Forcast
+            var weather = data.weather;
+            for (var item of weather) {
+              var wetherIndi = item.main.toUpperCase();
+              var wetherIndi2 = item.description.toUpperCase();
+              document.getElementById("main").innerHTML = `<i class="bi bi-rainbow text-info"></i> Live : ${wetherIndi}, ${wetherIndi2} `;
+              // document.getElementById("description").innerHTML = ``;
+            }
+
+            //weather Animation
+
+            var pic = document.createElement("img");
+            var pic1 = document.createElement("img");
+            var pic2 = document.createElement("img");
+            var pic3 = document.createElement("img");
+            var pic4 = document.createElement("img");
+            var pic5 = document.createElement("img");
+
+            pic.src = "https://cdn.lowgif.com/full/32f289374f842228-.gif";
+            pic.width = 200;
+            pic.height = 150;
+            pic1.src = "https://cdn.dribbble.com/users/2120934/screenshots/6193524/19_mostlysunny.gif";
+            pic1.width = 200;
+            pic1.height = 150;
+            pic2.src = "https://i.pinimg.com/originals/d9/70/d7/d970d7709ec37c83486e7a67875d082b.gif";
+            pic2.width = 220;
+            pic2.height = 150;
+            pic3.src = "http://pa1.narvii.com/7596/42be47a411db18d8a06ad901294b5d6f7f633201r1-480-480_00.gif";
+            pic3.width = 220;
+            pic3.height = 150;
+            pic4.src = "https://cdn.dribbble.com/users/2120934/screenshots/6193458/13_snow.gif";
+            pic4.width = 220;
+            pic4.height = 150;
+            pic5.src = "https://c.tenor.com/nBR0EXu7hmoAAAAC/kawanimals-rain.gif";
+            pic5.width = 200;
+            pic5.height = 150;
+
+            rainExp = "RAIN";
+            cloudExp = "CLOUDS";
+            clearExp = "CLEAR";
+            hazeExp = "HAZE";
+            mistExp = "MIST";
+            snowExp = "SNOW";
+            smokeExp = "SMOKE";
+            if (wetherIndi.match(rainExp)) {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-umbrella"></i>  <p class="text-info"> It's a Raining Today</p>`;
+              document.getElementById("rain").appendChild(pic);
+            } else if (wetherIndi.match(cloudExp)) {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-clouds"></i>  <p class="text-secondary"> It's a Cloudy Today</p>`;
+              document.getElementById("rain").appendChild(pic1);
+            } else if (wetherIndi.match(hazeExp)) {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-clouds"></i>  <p class="text-primary"> It's a Hazy Today</p>`;
+              document.getElementById("rain").appendChild(pic3);
+            } else if (wetherIndi.match(mistExp)) {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-umbrella"></i>  <p class="text-info"> It's a Showering Today</p>`;
+              document.getElementById("rain").appendChild(pic5);
+            } else if (wetherIndi.match(snowExp)) {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-umbrella"></i>  <p class="text-info"> It's a Snowing Today</p>`;
+              document.getElementById("rain").appendChild(pic4);
+            } else if (wetherIndi.match(smokeExp)) {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-wind"></i>  <p class="text-info"> Poor Air Quality Today</p>`;
+              document.getElementById("rain").appendChild(pic3);
+            } else {
+              document.getElementById("rain").innerHTML = `<i class="bi bi-brightness-high"></i>  <p class="text-warning"> It's a Clear Today </p>`;
+              document.getElementById("rain").appendChild(pic2);
+            }
+          });
+
+        //Whishes
+      }
+    </script>
+
+    <script>
+      //time
+
+      function showTime() {
+        var now = new Date();
+        var clock = now.toLocaleTimeString();
+        document.getElementById("clockTime").innerHTML = clock;
+      }
+
+      function bodyload() {
+        setInterval(showTime, 2000);
+
+        //Time
+
+        var nowdate = new Date();
+        var hr = nowdate.getHours();
+
+        if (hr >= 05 && hr <= 12) {
+          document.getElementById("wish").innerHTML = `Good Morning`;
+        } else if (hr > 12 && hr <= 17) {
+          document.getElementById("wish").innerHTML = `Good Afternoon`;
+        } else if (hr > 17 && hr <= 23) {
+          document.getElementById("wish").innerHTML = `Good Evening`;
+        } else {
+          document.getElementById("wish").innerHTML = `Good Night`;
+        }
+
+        // date
+        var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var months = ["January", "February ", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        document.getElementById("dateId").innerHTML = `${weekdays[nowdate.getDay()]} ${nowdate.getDate()} ${
+          months[nowdate.getMonth()]
+        } ${nowdate.getFullYear()}`;
+      }
+    </script>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
